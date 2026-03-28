@@ -74,7 +74,7 @@ modalOverlay.addEventListener("click", e => { if (e.target === modalOverlay) clo
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
 
 // ── Load athletes into state ───────────────────────────────────────────────
-function setAthletes(list, idGara) {
+function setAthletes(list, idGara, saveToLocal = true) {
     allAthletes = list.map(a => ({
         ...a,
         PETT_NUM: parseInt(a.PETT, 10) || 0,
@@ -83,6 +83,11 @@ function setAthletes(list, idGara) {
     allAthletes.sort((a, b) => a.PETT_NUM - b.PETT_NUM);
     currentIdGara = idGara || "";
     updateGaraBadge();
+
+    if (saveToLocal) {
+        localStorage.setItem("fidal_id_gara", currentIdGara);
+        localStorage.setItem("fidal_iscritti", JSON.stringify(list));
+    }
 }
 
 function updateGaraBadge() {
@@ -94,19 +99,20 @@ function updateGaraBadge() {
     }
 }
 
-// ── Auto-load cache on startup ─────────────────────────────────────────────
-async function autoLoadCache() {
+// ── Auto-load from LocalStorage on startup ────────────────────────────────
+function autoLoadCache() {
     try {
-        const res = await fetch("/api/iscritti");
-        const data = await res.json();
-        if (data.iscritti && data.iscritti.length > 0) {
-            setAthletes(data.iscritti, data.id_gara);
+        const id = localStorage.getItem("fidal_id_gara");
+        const json = localStorage.getItem("fidal_iscritti");
+        if (id && json) {
+            const list = JSON.parse(json);
+            setAthletes(list, id, false); // don't re-save
             // Pre-fill ICRON input
-            if (data.id_gara) document.getElementById("icron-id").value = data.id_gara;
+            document.getElementById("icron-id").value = id;
             setStatus(icronStatus,
-                `✅ ${data.count} iscritti caricati da cache (ID: ${data.id_gara})`, "ok");
+                `✅ ${list.length} iscritti caricati dalla sessione locale (ID: ${id})`, "ok");
         }
-    } catch (_) { /* no cache yet */ }
+    } catch (e) { console.warn("Errore caricamento sessione locale:", e); }
 }
 
 // ── ICRON fetch ────────────────────────────────────────────────────────────

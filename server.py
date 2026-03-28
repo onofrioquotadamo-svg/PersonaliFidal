@@ -16,25 +16,6 @@ from fidal_core import (
 
 app = Flask(__name__, static_folder="static", static_url_path="")
 
-CACHE_FILE = "icron_cache.json"
-
-
-# ── Helper ──────────────────────────────────────────────────────────────────
-
-def load_cache() -> dict:
-    if os.path.exists(CACHE_FILE):
-        try:
-            with open(CACHE_FILE, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            pass
-    return {}
-
-
-def save_cache(id_gara: str, athletes: list[dict]):
-    with open(CACHE_FILE, "w", encoding="utf-8") as f:
-        json.dump({"id_gara": id_gara, "iscritti": athletes}, f, ensure_ascii=False)
-
 
 # ── Routes ───────────────────────────────────────────────────────────────────
 
@@ -43,20 +24,9 @@ def index():
     return send_from_directory("static", "index.html")
 
 
-@app.route("/api/iscritti", methods=["GET"])
-def get_iscritti():
-    """Return cached athletes."""
-    cache = load_cache()
-    return jsonify({
-        "id_gara": cache.get("id_gara", ""),
-        "iscritti": cache.get("iscritti", []),
-        "count": len(cache.get("iscritti", []))
-    })
-
-
 @app.route("/api/carica", methods=["POST"])
 def carica():
-    """Fetch athletes from ICRON, cache them, return list."""
+    """Fetch athletes from ICRON, returns them to the caller. Stateless."""
     data = request.get_json(force=True)
     id_gara = str(data.get("id_gara", "")).strip()
     if not id_gara:
@@ -64,7 +34,6 @@ def carica():
 
     try:
         athletes = fetch_from_icron(id_gara)
-        save_cache(id_gara, athletes)
         return jsonify({
             "id_gara": id_gara,
             "iscritti": athletes,
