@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="FIDAL Ricerca Iscritti Gara — schede atleti e primati personali in tempo reale." />
+  <title>🏃 FIDAL · Ricerca Iscritti Gara</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── Header ─────────────────────────────────────────────────────────── -->
+  <header>
+    <div class="header-inner">
+      <div class="logo">🏃 <span>FIDAL</span> Gara Live</div>
+      <div id="gara-badge" class="gara-badge hidden"></div>
+    </div>
+  </header>
+
+  <!-- ── 3-button nav ───────────────────────────────────────────────────── -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-section="carica"  id="nav-carica">📁 Carica Gara</button>
+    <button class="tab-btn"        data-section="elenco"  id="nav-elenco">👥 Elenco Iscritti</button>
+    <button class="tab-btn"        data-section="cerca"   id="nav-cerca">🔍 Cerca Atleta</button>
+  </nav>
+
+  <!-- ── Sections ───────────────────────────────────────────────────────── -->
+  <main>
+
+    <!-- CARICA GARA -->
+    <section id="section-carica" class="section active">
+      <h2>📁 Carica Gara</h2>
+
+      <div class="card">
+        <label class="radio-group">
+          <input type="radio" name="sorgente" value="icron" checked id="radio-icron" />
+          <span>🌐 Scarica da ICRON</span>
+        </label>
+        <label class="radio-group">
+          <input type="radio" name="sorgente" value="csv" id="radio-csv" />
+          <span>📄 Carica CSV locale</span>
+        </label>
+      </div>
+
+      <!-- ICRON panel -->
+      <div id="panel-icron" class="card">
+        <label class="field-label" for="icron-id">ID Gara ICRON</label>
+        <input id="icron-id" type="text" placeholder="Es. 20264691"
+               class="text-input"
+               title="L'ID è l'ultima parte dell'URL: https://www.icron.it/newgo/#/evento/20264691" />
+        <div class="btn-row">
+          <button id="btn-carica-icron" class="btn btn-primary">⬇️ Carica Iscritti</button>
+          <button id="btn-reload-icron" class="btn btn-secondary">🔄 Ricarica da ICRON</button>
+        </div>
+        <div id="icron-status" class="status-msg hidden"></div>
+      </div>
+
+      <!-- CSV panel -->
+      <div id="panel-csv" class="card hidden">
+        <label class="field-label" for="csv-file">File CSV Iscritti</label>
+        <input id="csv-file" type="file" accept=".csv" class="file-input" />
+        <div id="csv-status" class="status-msg hidden"></div>
+      </div>
+    </section>
+
+    <!-- ELENCO ISCRITTI -->
+    <section id="section-elenco" class="section hidden">
+      <h2>👥 Elenco Iscritti</h2>
+      <div id="elenco-empty" class="empty-state">
+        Nessuna gara caricata. Vai su <b>📁 Carica Gara</b> per cominciare.
+      </div>
+      <div id="elenco-content" class="hidden">
+        <div class="filter-bar">
+          <input id="elenco-filter" type="text" placeholder="🔎  Filtra per cognome, nome o pettorale…" class="text-input" />
+          <span id="elenco-count" class="count-badge"></span>
+        </div>
+        <div class="athlete-table" id="athlete-table">
+          <!-- filled by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- CERCA ATLETA -->
+    <section id="section-cerca" class="section hidden">
+      <h2>🔍 Cerca Atleta</h2>
+      <div id="cerca-empty" class="empty-state hidden">
+        Nessuna gara caricata. Vai su <b>📁 Carica Gara</b> per cominciare.
+      </div>
+      <div id="cerca-content">
+        <div class="search-grid">
+          <div>
+            <label class="field-label" for="search-pett">🏅 Pettorale</label>
+            <input id="search-pett" type="text" placeholder="Es. 123" class="text-input big-input" />
+          </div>
+          <div>
+            <label class="field-label" for="search-nome">👤 Nome o Cognome</label>
+            <input id="search-nome" type="text" placeholder="Es. Rossi" class="text-input big-input" />
+          </div>
+        </div>
+        <button id="btn-cerca" class="btn btn-primary btn-full">🔍 Cerca</button>
+        <div id="cerca-results" class="athlete-table" style="margin-top:1rem"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── Athlete Modal ──────────────────────────────────────────────────── -->
+  <div id="modal-overlay" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-box">
+      <button class="modal-close" id="modal-close" aria-label="Chiudi">&times;</button>
+      <div id="modal-body">
+        <!-- filled by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Spinner ────────────────────────────────────────────────────────── -->
+  <div id="spinner" class="spinner-overlay hidden">
+    <div class="spinner-ring"></div>
+    <p class="spinner-text">Caricamento…</p>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
