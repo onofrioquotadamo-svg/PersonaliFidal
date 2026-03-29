@@ -7,7 +7,7 @@ import io
 from fpdf import FPDF
 from fidal_utils import (
     fetch_from_icron, encode_tessera, extract_all_pbs, 
-    hms_to_seconds, load_cache, save_cache
+    hms_to_seconds, load_cache, save_cache, get_base64_logo
 )
 
 st.set_page_config(page_title="ICRON Virtual Start", page_icon="🏁", layout="wide")
@@ -83,11 +83,13 @@ def main():
         </style>
     """, unsafe_allow_html=True)
 
-    # Header con Logo (Percorso Assoluto utile su Render)
+    # Header con Logo (Metodo Base64 infallibile)
     logo_path = os.path.join(os.path.dirname(__file__), "icron_logo.png")
+    b64_logo = get_base64_logo(logo_path)
+    
     col_l, col_t = st.columns([1, 4])
-    if os.path.exists(logo_path):
-        col_l.image(logo_path, width=180)
+    if b64_logo:
+        col_l.markdown(f'<img src="data:image/png;base64,{b64_logo}" width="180">', unsafe_allow_html=True)
     else:
         col_l.warning("⚠️ Logo non trovato")
     

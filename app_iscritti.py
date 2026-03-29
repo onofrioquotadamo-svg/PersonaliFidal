@@ -18,7 +18,8 @@ st.set_page_config(page_title="PERSONAL BEST Iscritti", page_icon="🏅", layout
 # ── Core helpers ─────────────────────────────────────────────────────────────
 
 from fidal_utils import (
-    decode_tessera, encode_tessera, hms_to_seconds, fetch_from_icron, extract_all_pbs
+    decode_tessera, encode_tessera, hms_to_seconds, fetch_from_icron, extract_all_pbs,
+    get_base64_logo
 )
 
 # (Le funzioni core sono caricate da fidal_utils.py)
@@ -110,11 +111,13 @@ div[data-testid="stButton"] > button[kind="primary"] { background: #4caf50 !impo
 </style>
 """, unsafe_allow_html=True)
 
-    # Header con Logo (Percorso Assoluto utile su Render)
+    # Header con Logo (Metodo Base64 infallibile)
     logo_path = os.path.join(os.path.dirname(__file__), "icron_logo.png")
+    b64_logo = get_base64_logo(logo_path)
+    
     col_l, col_t = st.columns([1, 4])
-    if os.path.exists(logo_path):
-        col_l.image(logo_path, width=180)
+    if b64_logo:
+        col_l.markdown(f'<img src="data:image/png;base64,{b64_logo}" width="180">', unsafe_allow_html=True)
     else:
         col_l.warning("⚠️ Logo non trovato")
     
