@@ -110,11 +110,13 @@ div[data-testid="stButton"] > button[kind="primary"] { background: #4caf50 !impo
 </style>
 """, unsafe_allow_html=True)
 
-    # Header con Logo
+    # Header con Logo (Percorso Assoluto utile su Render)
+    logo_path = os.path.join(os.path.dirname(__file__), "icron_logo.png")
     col_l, col_t = st.columns([1, 4])
-    try:
-        col_l.image("icron_logo.png", width=180)
-    except: pass
+    if os.path.exists(logo_path):
+        col_l.image(logo_path, width=180)
+    else:
+        col_l.warning("⚠️ Logo non trovato")
     
     col_t.markdown("<div style='display:flex;align-items:center;height:70px;margin-bottom:10px'><span style='font-size:2rem;font-weight:900;letter-spacing:-1.2px;color:white'>PERSONAL BEST <span style='color:#4caf50'>Iscritti</span></span></div>", unsafe_allow_html=True)
 

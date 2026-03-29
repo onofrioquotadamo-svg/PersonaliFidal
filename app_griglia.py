@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import concurrent.futures
 import requests
+import os
 import io
 from fpdf import FPDF
 from fidal_utils import (
@@ -82,11 +83,13 @@ def main():
         </style>
     """, unsafe_allow_html=True)
 
-    # Header con Logo
+    # Header con Logo (Percorso Assoluto utile su Render)
+    logo_path = os.path.join(os.path.dirname(__file__), "icron_logo.png")
     col_l, col_t = st.columns([1, 4])
-    try:
-        col_l.image("icron_logo.png", width=180)
-    except: pass
+    if os.path.exists(logo_path):
+        col_l.image(logo_path, width=180)
+    else:
+        col_l.warning("⚠️ Logo non trovato")
     
     col_t.title("ICRON Virtual Start")
     col_t.markdown("Generazione seeding professionale basato sui PB FIDAL.")
